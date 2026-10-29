@@ -1,0 +1,48 @@
+PRACTICAL 5 : Support Vector Machines (SVM)
+#####################################################################
+# Needs diabetes.csv (with an "Outcome" column)
+
+import pandas as pd
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.model_selection import cross_val_score, GridSearchCV
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+
+df = pd.read_csv("diabetes.csv")
+X = df.drop("Outcome", axis=1)
+y = df["Outcome"]
+
+X_train, X_test = X.iloc[:600], X.iloc[600:]
+y_train, y_test = y[:600], y[600:]
+
+# Train SVM Model
+support_vector_classifier = SVC(kernel='linear')
+support_vector_classifier.fit(X_train, y_train)
+
+# Parameter Tuning
+svm_params = {'C': np.arange(1, 10)}
+svm_cv = GridSearchCV(SVC(kernel='linear'), svm_params, cv=5)
+svm_cv.fit(X_train, y_train)
+
+# Tuned Model
+svm_tuned = SVC(kernel='linear', C=svm_cv.best_params_['C'])
+svm_tuned.fit(X_train, y_train)
+y_pred = svm_tuned.predict(X_test)
+
+print("Final Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+Output:
+Confusion Matrix:
+ [[96 12]
+ [27 33]]
+
+Final Accuracy: 0.7678571428571429
+              precision    recall  f1-score   support
+
+           0       0.78      0.89      0.83       108
+           1       0.73      0.55      0.63        60
+
+    accuracy                           0.77       168
+   macro avg       0.76      0.72      0.73       168
+weighted avg       0.76      0.77      0.76       168
