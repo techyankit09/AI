@@ -1,0 +1,45 @@
+PRACTICAL 7 : Naive Bayes' Classifier
+#####################################################################
+# Needs disease.csv
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import LabelEncoder
+
+df = pd.read_csv("disease.csv")
+le = LabelEncoder()
+
+columns_to_encode = ['Sore Throat', 'Fever', 'Swollen Glands', 'Congestion', 'Headache', 'Diagnosis']
+for col in columns_to_encode:
+    df[col] = le.fit_transform(df[col])
+
+X = df.drop('Diagnosis', axis=1)
+y = df['Diagnosis']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+Output:
+Class Probabilities:
+ [[0.01 0.96 0.03]
+ [0.85 0.10 0.05]
+ [0.02 0.04 0.94]]
+
+Accuracy: 0.6666666666666666
+              precision    recall  f1-score   support
+
+           0       0.67      0.67      0.67         3
+           1       0.50      1.00      0.67         1
+           2       1.00      0.50      0.67         2
+
+    accuracy                           0.67         6
+   macro avg       0.72      0.72      0.67         6
+weighted avg       0.75      0.67      0.67         6
