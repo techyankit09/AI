@@ -1,0 +1,113 @@
+PRACTICAL 1 : Breadth First Search & Iterative Depth First Search
+#####################################################################
+
+---------------------------------------------------------------------
+1(a): Implement the Breadth First Search (BFS) algorithm
+---------------------------------------------------------------------
+import queue as Q
+from RMP import dict_gn # Ensure RMP.py is in the same directory
+
+start = "Arad"
+goal = "Bucharest"
+result = ""
+
+def BFS(city, cityq, visitedq):
+    global result
+    if city == start:
+        result = result + " " + city
+
+    for eachcity in dict_gn[city].keys():
+        if eachcity == goal:
+            result = result + " " + eachcity
+            return
+
+        if eachcity not in list(cityq.queue) and eachcity not in list(visitedq.queue):
+            cityq.put(eachcity)
+            result = result + " " + eachcity
+
+    visitedq.put(city)
+
+    if not cityq.empty():
+        BFS(cityq.get(), cityq, visitedq)
+
+def main():
+    cityq = Q.Queue()
+    visitedq = Q.Queue()
+
+    BFS(start, cityq, visitedq)
+
+    print("BFS Traversal From", start, "to", goal, "is:")
+    print(result)
+
+if __name__ == "__main__":
+    main()
+
+Output:
+BFS Traversal From Arad to Bucharest is:
+Arad Zerind Timisoara Sibiu Oradea Lugoj Rimnica Fagaras Mehadia Pitesti Craiova Bucharest
+
+
+---------------------------------------------------------------------
+1(b): Implement the Iterative Depth First Search (IDDFS) algorithm
+---------------------------------------------------------------------
+from RMP import dict_gn
+
+start = "Arad"
+goal = "Bucharest"
+result = ""
+
+def DLS(city, visitedstack, startlimit, endlimit):
+    global result
+    result += city + " "
+    visitedstack.append(city)
+
+    if city == goal:
+        return 1
+
+    if startlimit == endlimit:
+        return 0
+
+    for eachcity in dict_gn[city].keys():
+        if eachcity not in visitedstack:
+            found = DLS(eachcity, visitedstack, startlimit + 1, endlimit)
+            if found:
+                return found
+    return 0
+
+def IDDFS(city, visitedstack, endlimit):
+    global result
+    for i in range(endlimit):
+        print("Searching at Limit:", i)
+        found = DLS(city, visitedstack, 0, i)
+        if found:
+            print("Found!")
+            break
+        else:
+            print("Not Found!")
+            result = ""
+            visitedstack.clear()
+
+def main():
+    visitedstack = []
+    IDDFS(start, visitedstack, 9)
+    print("IDDFS Traversal from", start, "to", goal, "is:")
+    print(result)
+
+if __name__ == "__main__":
+    main()
+
+Output:
+Searching at Limit: 0
+Not Found!
+Searching at Limit: 1
+Not Found!
+Searching at Limit: 2
+Not Found!
+Searching at Limit: 3
+Not Found!
+Searching at Limit: 4
+Not Found!
+Searching at Limit: 5
+Found!
+IDDFS Traversal from Arad to Bucharest is:
+Arad Zerind Oradea Sibiu Rimnicu Pitesti Craiova Fagaras Bucharest
