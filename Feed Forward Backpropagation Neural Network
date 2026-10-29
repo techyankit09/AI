@@ -1,0 +1,65 @@
+PRACTICAL 4 : Feed Forward Backpropagation Neural Network
+#####################################################################
+import numpy as np
+
+class NeuralNetwork():
+    def __init__(self):
+        np.random.seed(1)
+        # 3 inputs, 1 output layer
+        self.synaptic_weights = 2 * np.random.random((3, 1)) - 1
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_derivative(self, x):
+        return x * (1 - x)
+
+    def train(self, training_inputs, training_outputs, training_iterations):
+        for iteration in range(training_iterations):
+            output = self.think(training_inputs)
+            error = training_outputs - output
+            adjustments = np.dot(training_inputs.T, error * self.sigmoid_derivative(output))
+            self.synaptic_weights += adjustments
+
+    def think(self, inputs):
+        inputs = inputs.astype(float)
+        output = self.sigmoid(np.dot(inputs, self.synaptic_weights))
+        return output
+
+if __name__ == "__main__":
+    neural_network = NeuralNetwork()
+
+    training_inputs = np.array([[0,0,1], [1,1,1], [1,0,1], [0,1,1]])
+    training_outputs = np.array([[0,1,1,0]]).T
+
+    print("Beginning Randomly Generated Weights:")
+    print(neural_network.synaptic_weights)
+
+    print("\nTraining the network...")
+    neural_network.train(training_inputs, training_outputs, 15000)
+
+    print("\nEnding Weights After Training:")
+    print(neural_network.synaptic_weights)
+
+    test_inputs = np.array([[1,0,0], [0,1,0], [1,1,0]])
+    print("\nTesting the Trained Network:")
+    for test in test_inputs:
+        print(test, "->", neural_network.think(test))
+
+Output:
+Beginning Randomly Generated Weights:
+[[-0.16595599]
+ [ 0.44064899]
+ [-0.99977125]]
+
+Training the network...
+
+Ending Weights After Training:
+[[10.38040701]
+ [-0.20641179]
+ [-4.98452047]]
+
+Testing the Trained Network:
+[1 0 0] -> [0.999969]
+[0 1 0] -> [0.448574]
+[1 1 0] -> [0.999964]
