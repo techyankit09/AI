@@ -1,0 +1,33 @@
+PRACTICAL 6 : Adaboost Ensemble Learning
+#####################################################################
+import pandas as pd
+from sklearn import model_selection
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = pd.read_csv(url, names=names)
+
+array = dataframe.values
+X = array[:, 0:8]
+Y = array[:, 8]
+
+seed = 7
+num_trees = 30
+kfold = model_selection.KFold(n_splits=10, random_state=seed, shuffle=True)
+
+# AdaBoost
+model = AdaBoostClassifier(n_estimators=num_trees, random_state=seed)
+results = model_selection.cross_val_score(model, X, Y, cv=kfold)
+
+# Decision Tree (Weak Classifier)
+model1 = DecisionTreeClassifier()
+results1 = model_selection.cross_val_score(model1, X, Y, cv=kfold)
+
+print("Decision Tree Accuracy:", results1.mean())
+print("AdaBoost Accuracy:", results.mean())
+
+Output:
+Decision Tree Accuracy: 0.695345
+AdaBoost Accuracy: 0.761777
